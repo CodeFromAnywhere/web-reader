@@ -5,6 +5,28 @@ export const json = (data: any) => {
     },
   });
 };
+/**
+// Example usage:
+const urls = [
+  "http:/example.com",
+  "https:/example.com",
+  "http://example.com",
+  "https://example.com",
+  "http:/subdomain.example.com",
+  "https:/subdomain.example.com",
+];
+
+urls.forEach((url) => {
+  console.log(`Original: ${url}, Modified: ${addSlashToUrl(url)}`);
+});
+
+*/
+function addSlashToUrl(url: string): string {
+  // Regular expression to match http(s):/{anything}
+  const regex = /(https?):\/(\/?.*)/g;
+  // Replace with http(s)://{anything}
+  return url.replace(regex, "$1://$2");
+}
 
 export const mergeObjectsArray = <T extends { [key: string]: any }>(
   objectsArray: T[],
@@ -52,10 +74,11 @@ export const GET = async (request: Request) => {
     url.searchParams.get("summarisationPrompt") ||
     "Please summarize the following section:";
 
-  const websiteUrl = request.url.slice(url.origin.length + 1);
-  console.log({ websiteUrl });
+  const websiteUrl = addSlashToUrl(request.url.slice(url.origin.length + 1));
 
-  if (!websiteUrl.startsWith("http://") && !websiteUrl.startsWith("https://")) {
+  const prefixes = ["https://", "http://"];
+
+  if (!prefixes.find((prefix) => websiteUrl.startsWith(prefix))) {
     return new Response("Please add a website URL into your path", {
       status: 400,
     });
