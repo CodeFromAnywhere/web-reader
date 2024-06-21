@@ -1,0 +1,134 @@
+{
+  "x-actionschema": "0.0.1",
+  "$schema": "https://raw.githubusercontent.com/CodeFromAnywhere/ActionSchema/main/schemas/openapi.schema.json",
+  "openapi": "3.0.0",
+  "info": {
+    "title": "GitHub Repository Fetcher",
+    "description": "An API to fetch and unzip files from a GitHub repository.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://web.actionschema.com",
+      "description": "Default server"
+    }
+  ],
+  "paths": {
+    "/{url}": {
+      "get": {
+        "operationId": "readWebsiteContents",
+        "summary": "Read website contents in markdown",
+        "parameters": [
+          {
+            "name": "url",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "PDF or Website URL"
+          },
+
+          {
+            "name": "sections",
+            "in": "query",
+            "description": "Filter sections. If given, will respond only with the sections that you selected here. Comma-separate the sections, then dot-separate the nested sections. Example: `1.0.1,2.0,5` would correspond to 3 sections: 1.0.1, 2.0, and 5. 1.0.1 means the 2nd section of the first section of the second section.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "model",
+            "in": "query",
+            "description": "Model name. Must be one of our integrated model/provider pairs.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key",
+            "in": "query",
+            "description": "API key for the model.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "maxChunkSize",
+            "in": "query",
+            "description": "Can be provided to alter maxChunkSize, which is chunked using a recursive chunking strategy.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 4096
+            }
+          },
+          {
+            "name": "summarisationPrompt",
+            "in": "query",
+            "description": "Can be provided to change the summarisation prompt.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "Please summarize the following section:"
+            }
+          },
+          {
+            "name": "accept",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Accept header, use \"application/json\" for JSON response"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Keys are file paths prefixed with {repo}/{branch}/. Values are the file contents.",
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              },
+              "text/markdown": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

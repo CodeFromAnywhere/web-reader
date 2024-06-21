@@ -1,0 +1,20 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/:path*",
+      "destination": "/api/index.ts"
+    },
+    {
+      "source": "/",
+      "destination": "/api/index.ts"
+    }
+  ],
+  "functions": {
+    "api/*.ts": {
+      "maxDuration": 60,
+      "memory": 1024
+    }
+  },
+  "public": true
+}
